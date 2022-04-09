@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,500&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <title>Sorting Algorithms Visualizer</title>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <!-- Logo -->
+        <h1>Sort visualizer</h1>
+
+        <!-- Generate random array button -->
+        <button id="generate">Generate Array</button>
+
+        <div id="select">
+          <label for="length">Array length: </label>
+          <select name="length" id="length">
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30" selected>30</option>
+              <option value="40">40</option>
+              <option value="50">50</option>
+          </select>
+        </div>
+
+
+        <!-- Sorting algorithms buttons-->
+        <ul>
+          <li><button id="quick">QuickSort</button></li>
+          <li><button id="merge">MergeSort</button></li>
+          <li><button id="bubble">BubbleSort</button></li>
+          <li><button id="heap">HeapSort</button></li>
+        </ul>
+      </header>
+
+      <!-- Main -->
+      <main>
+        <ul id="array">
+        </ul>
+      </main>
+
+      <!-- Footer -->
+      <footer>
+        <span>Created by Facundo Casaccio - 2022</span>
+      </footer>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>
