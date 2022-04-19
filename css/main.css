@@ -29,7 +29,14 @@ header {
     display: flex;
     justify-content: space-around;
     align-items: center;
+}
+
+header.light {
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+header.dark {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
 }
 
 h1 {
@@ -132,7 +139,14 @@ footer {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+footer.light {
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+footer.dark {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
 }
 
 footer > span {

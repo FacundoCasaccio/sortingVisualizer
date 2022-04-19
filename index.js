@@ -152,7 +152,7 @@ function displayArray(array) {
     let list = document.querySelector("#array");
     let className;
 
-    if (!config.darkMode) className = "darkArrayElement"
+    if (config.darkMode) className = "darkArrayElement"
     else className = "lightArrayElement"
 
     //Por cada elemento del array crear un li
@@ -190,13 +190,25 @@ function matchSelectedLength() { //Iniciar con opcion guardada por usuario
     currentLength.selected = true; //Dar atributo de seleccionada para que inicie
 }
 
+function matchDarkMode() {
+    if (config.darkMode) {
+        //UI elements
+        elements = document.querySelectorAll(`.light`);
+        arrayElements = document.querySelectorAll(`.lightArrayElement`);
+        
+        //Cambiar clase de elementos
+        elements.forEach( element => element.className = element.className.replace("light", "dark"));
+        arrayElements.forEach( element => element.className = `darkArrayElement`);
+    };
+}
+
 //***** Protocolo de inicio *****//
 function initProtocol() {
     initializeConfig();
     matchSelectedLength();
     globalArray = generateArray();
     displayArray(globalArray);
-    darkModeSwitch();
+    matchDarkMode();
 }
 
 //Funcionalidad de UI
@@ -207,15 +219,21 @@ function darkModeSwitch() {
     let currentClass;
     let button = document.querySelector("#darkMode");
 
+    getConfig();  
+
     if (config.darkMode) {
         currentClass = "dark";
         newClass = "light";
         button.innerHTML = "Dark Mode";
+        config.darkMode = false;
     } else {
         currentClass = "light";
         newClass = "dark";
         button.innerHTML = "Light mode";
+        config.darkMode = true;
     }
+
+    updateConfig();
 
     //UI elements
     elements = document.querySelectorAll(`.${currentClass}`);
@@ -270,10 +288,6 @@ document.getElementById("heap").addEventListener("click", () => {
 
 //***** activar/desactivar modo oscuro *****//
 document.querySelector("#darkMode").addEventListener("click", () => {
-    getConfig();
-    if (!config.darkMode) config.darkMode = true;
-    else config.darkMode = false;
-    updateConfig();
     darkModeSwitch();
 })
 
