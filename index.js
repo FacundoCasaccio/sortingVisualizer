@@ -190,9 +190,9 @@ function matchSelectedLength() { //Iniciar con opcion guardada por usuario
     currentLength.selected = true; //Dar atributo de seleccionada para que inicie
 }
 
-function matchDarkMode() {
+function matchDarkMode() { //sincronizar el tema con la configuracion previa del usuario
     if (config.darkMode) {
-        //UI elements
+        //Seleccionar los elementos que por default son light en el html
         elements = document.querySelectorAll(`.light`);
         arrayElements = document.querySelectorAll(`.lightArrayElement`);
         
@@ -203,25 +203,26 @@ function matchDarkMode() {
 }
 
 //***** Protocolo de inicio *****//
-function initProtocol() {
-    initializeConfig();
-    matchSelectedLength();
-    globalArray = generateArray();
-    displayArray(globalArray);
-    matchDarkMode();
+function initProtocol() { //protocolo de inicio. Cada vez que se abre hace las tareas necesarias
+    initializeConfig(); //Inicializa configuracion
+    matchSelectedLength(); //Corrige la opcion del select acorde a la longitud del array
+    globalArray = generateArray(); //Genera un array en base a la longitud
+    displayArray(globalArray); //Lo muestra en pantalla
+    matchDarkMode(); //Sincroniza el tema con la configuracion
 }
 
 //Funcionalidad de UI
 //***** aplicar modo oscuro *****//
 function darkModeSwitch() {
-    let elements, arrayElements;
+    let elements, arrayElements; //elementos de interfaz y de array
     let newClass;
     let currentClass;
-    let button = document.querySelector("#darkMode");
+    let button = document.querySelector("#darkMode"); //boton de cambiar modo
 
-    getConfig();  
+    getConfig();  //obtiene la configuracion actual
 
-    if (config.darkMode) {
+    //cambiar las propiedades segun el modo 
+    if (config.darkMode) { 
         currentClass = "dark";
         newClass = "light";
         button.innerHTML = "Dark Mode";
@@ -233,9 +234,9 @@ function darkModeSwitch() {
         config.darkMode = true;
     }
 
-    updateConfig();
+    updateConfig(); //actualizar informacion
 
-    //UI elements
+    //Seleccionar los elementos segun el tema
     elements = document.querySelectorAll(`.${currentClass}`);
     arrayElements = document.querySelectorAll(`.${currentClass}ArrayElement`);
     
@@ -291,9 +292,7 @@ document.querySelector("#darkMode").addEventListener("click", () => {
     darkModeSwitch();
 })
 
-//Testing
-//let fixedArray = [4,2,7,11,8,2,5,1];
-initProtocol();
+initProtocol(); //Inicializar el programa
 
 
 
