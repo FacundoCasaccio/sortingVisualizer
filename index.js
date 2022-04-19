@@ -1,7 +1,7 @@
 let globalArray = []; //array en js que representa el array en pantalla
-const config = {
+let config = {
     arrayLength: 30,  //largo del array que se muestra en pantalla
-    theme: localStorage.getItem("darkMode")
+    darkMode: false
 }
 
 //Generar array aleatorio con largo especificado
@@ -150,31 +150,102 @@ function merge (leftArray, rightArray) {
 function displayArray(array) {
     clearArray(); //limpiar pantalla
     let list = document.querySelector("#array");
+    let className;
+
+    if (!config.darkMode) className = "darkArrayElement"
+    else className = "lightArrayElement"
 
     //Por cada elemento del array crear un li
     for(let element of array) {
         let li = document.createElement("li");
-        li.className = "arrayElement"; //clase con propiedades de los elementos del array
+        li.className = className; //clase con propiedades de los elementos del array
         li.style = `height: ${element}px`; //estilo priopio de cada elemento (height representa el valor)
         li.innerHTML = element; //su valor interno para poder manipularlo 
         list.appendChild(li); //agregar a la lista
     }
 }
 
-//Limpiar array en pantalla
+//***** configuracion *****/
+function updateConfig() {
+    localStorage.setItem("config", JSON.stringify(config)); //Actualiza la configuracion modificada
+}
+
+function getConfig() {
+    config = JSON.parse(localStorage.getItem("config")); //Obtiene la configuracion local del usuario
+}
+
+function initializeConfig() { //Inicializar configuracion
+
+    let localConfig = JSON.parse(localStorage.getItem("config"));  //Configuracion local del usuario
+
+    if (localConfig == undefined) localStorage.setItem("config", JSON.stringify(config)) //Inicializar en dafault
+    else config = localConfig; //Inicializar con configuracion local
+}
+
+function matchSelectedLength() { //Iniciar con opcion guardada por usuario
+    
+    let optionIndex = (config.arrayLength / 10) - 1; //Indice de la opcion seleccionada en base a largo 
+    let currentLength = document.querySelector("#length").getElementsByTagName("option")[optionIndex]; //Opcion a seleccionar
+
+    currentLength.selected = true; //Dar atributo de seleccionada para que inicie
+}
+
+//***** Protocolo de inicio *****//
+function initProtocol() {
+    initializeConfig();
+    matchSelectedLength();
+    globalArray = generateArray();
+    displayArray(globalArray);
+    darkModeSwitch();
+}
+
+//Funcionalidad de UI
+//***** aplicar modo oscuro *****//
+function darkModeSwitch() {
+    let elements, arrayElements;
+    let newClass;
+    let currentClass;
+    let button = document.querySelector("#darkMode");
+
+    if (config.darkMode) {
+        currentClass = "dark";
+        newClass = "light";
+        button.innerHTML = "Dark Mode";
+    } else {
+        currentClass = "light";
+        newClass = "dark";
+        button.innerHTML = "Light mode";
+    }
+
+    //UI elements
+    elements = document.querySelectorAll(`.${currentClass}`);
+    arrayElements = document.querySelectorAll(`.${currentClass}ArrayElement`);
+    
+    //Cambiar clase de elementos
+    elements.forEach( element => element.className = element.className.replace(currentClass, newClass));
+    arrayElements.forEach( element => element.className = `${newClass}ArrayElement`);
+}
+
+//***** Limpiar array en pantalla *****//
 function clearArray() {
     let list = document.querySelector("#array");
     list.innerHTML = ""; //borrar los li del array
 }
 
-//Funcionalidad de UI
 //***** Generar nuevo array *****/
 document.getElementById("generate").addEventListener("click", 
     () => { 
-        config.arrayLength = document.querySelector("#length").value;
+        getConfig();
         globalArray = generateArray(); //reasignar valor random
         displayArray(globalArray) //mostrar en pantalla
     });
+
+//***** seleccionar largo array *****//
+document.querySelector("#length").addEventListener ("change", () => {
+    let selectedLenght = document.querySelector("#length").value;
+    config.arrayLength = selectedLenght;
+    updateConfig();
+});
 
 //***** Elegir algoritmo *****//
 document.getElementById("quick").addEventListener("click", () => {
@@ -197,16 +268,18 @@ document.getElementById("heap").addEventListener("click", () => {
     displayArray(globalArray); //mostrar
 })
 
-//***** Modo oscuro/claro *****//
-document.getElementById("darkMode").addEventListener("click", (config) => {
-
-    if(config.darkMode == "true") darkMode = "false";
-
-    localStorage.setItem("darkMode", darkMode);
+//***** activar/desactivar modo oscuro *****//
+document.querySelector("#darkMode").addEventListener("click", () => {
+    getConfig();
+    if (!config.darkMode) config.darkMode = true;
+    else config.darkMode = false;
+    updateConfig();
+    darkModeSwitch();
 })
 
 //Testing
 //let fixedArray = [4,2,7,11,8,2,5,1];
-//localStorage.setItem("darkMode", false);
-globalArray = generateArray();
-displayArray(globalArray);
+initProtocol();
+
+
+

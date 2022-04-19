@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,500&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;1,100;1,200;1,300;1,500&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css" />
 
     <title>Sorting Algorithms Visualizer</title>
   </head>
@@ -22,48 +25,40 @@
         <!-- Logo -->
         <h1 class="light">Sort visualizer</h1>
 
-        <!-- Dark mode on/off -->
-
-<div id="darkMode">
-          <label>
-            <input type="checkbox" name="theme">
-            <span class="check"></span>
-          </label>
-</div>
+        <!-- Change theme -->
+        <button id="darkMode" class="light">Dark Mode</button>
 
         <!-- Generate random array button -->
-        <button id="generate">Generate Array</button>
+        <button id="generate" class="light">Generate Array</button>
 
-        <div id="select">
-          <label for="length">Array length: </label>
-          <select name="length" id="length">
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="30" selected>30</option>
-              <option value="40">40</option>
-              <option value="50">50</option>
+        <div id="select" class="light">
+          <label for="length" class="light">Array length: </label>
+          <select name="length" id="length" class="light">
+            <option value="10" class="light">10</option>
+            <option value="20" class="light">20</option>
+            <option value="30" class="light">30</option>
+            <option value="40" class="light">40</option>
+            <option value="50" class="light">50</option>
           </select>
         </div>
 
-
         <!-- Sorting algorithms buttons-->
         <ul>
-          <li><button id="quick">QuickSort</button></li>
-          <li><button id="merge">MergeSort</button></li>
-          <li><button id="bubble">BubbleSort</button></li>
-          <li><button id="heap">HeapSort</button></li>
+          <li><button id="quick" class="light">QuickSort</button></li>
+          <li><button id="merge" class="light">MergeSort</button></li>
+          <li><button id="bubble" class="light">BubbleSort</button></li>
+          <li><button id="heap" class="light">HeapSort</button></li>
         </ul>
       </header>
 
       <!-- Main -->
       <main>
-        <ul id="array">
-        </ul>
+        <ul id="array"></ul>
       </main>
 
       <!-- Footer -->
-      <footer>
-        <span>Created by Facundo Casaccio - 2022</span>
+      <footer class="light">
+        <span class="light">Created by Facundo Casaccio - 2022</span>
       </footer>
     </div>
     <script src="index.js"></script>
