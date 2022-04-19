@@ -12,6 +12,16 @@
     flex-direction: column;
 }
 
+.light {
+    background-color: white;
+    color: #212121;
+}
+
+.dark {
+    background-color: #212121;
+    color: white;
+}
+
 /* Header elements */
 header {
     height: 15vh;
@@ -24,6 +34,62 @@ header {
 
 h1 {
     font-size: 1.4rem;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    visibility: hidden;
+    display: none;
+}
+
+.check {
+    position: relative;
+    display: block;
+    width: 40px;
+    height: 20px;
+    background-color: #212121;
+    cursor: pointer;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: ease-in 500ms;
+}
+
+/* Dark mode switch */
+input[type="checkbox"]:checked ~ .check {
+    background-color: white;
+}
+
+.check:before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    background-color: white;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transition: 500ms;
+}
+
+input[type="checkbox"]:checked ~ .check::before {
+    transform: translateX(-50px);
+}
+
+.check:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background-color: #212121;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    transition: 500ms;
+    transform: translateX(50px);
+}
+
+input[type="checkbox"]:checked ~ .check::after {
+    transform: translateX(0px);
 }
 
 button {
@@ -39,6 +105,7 @@ button {
 button:hover {
     background-color: #212121;
     color: white;
+    cursor: pointer;
 }
 
 button:active {
@@ -79,10 +146,21 @@ main {
 .arrayElement {
     display: block;
     background-color: #212121;
-    color: #212121;
+    color: transparent;
     width: 20px;
     margin: 0 5px;
 }
+
+.arrayElement .light {
+    background-color: #212121;
+    color: transparent;
+}
+
+.arrayElement .dark {
+    background-color: white;
+    color: transparent;
+}
+
 #select {
     display: flex;
     justify-content: center;

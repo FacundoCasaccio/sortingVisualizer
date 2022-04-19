@@ -1,6 +1,7 @@
 let globalArray = []; //array en js que representa el array en pantalla
 const config = {
-    arrayLength: 30  //largo del array que se muestra en pantalla
+    arrayLength: 30,  //largo del array que se muestra en pantalla
+    theme: localStorage.getItem("darkMode")
 }
 
 //Generar array aleatorio con largo especificado
@@ -196,9 +197,16 @@ document.getElementById("heap").addEventListener("click", () => {
     displayArray(globalArray); //mostrar
 })
 
+//***** Modo oscuro/claro *****//
+document.getElementById("darkMode").addEventListener("click", (config) => {
 
+    if(config.darkMode == "true") darkMode = "false";
+
+    localStorage.setItem("darkMode", darkMode);
+})
 
 //Testing
 //let fixedArray = [4,2,7,11,8,2,5,1];
+//localStorage.setItem("darkMode", false);
 globalArray = generateArray();
 displayArray(globalArray);
