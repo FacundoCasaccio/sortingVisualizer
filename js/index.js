@@ -5,7 +5,8 @@ let globalArray = [];
 //Objeto config para uso de JSON y guardar configuraciones de usuario.
 let config = {
     arrayLength: 30,
-    darkMode: false
+    darkMode: false,
+    sorted: false
 }
 
 //Actualiza la configuracion en local storage
@@ -21,13 +22,20 @@ function getConfig() {
 //Inicializar configuracion
 function initializeConfig() {
     //Obtener configuracion local
-    let localConfig = getConfig();
+    let localConfig = JSON.parse(localStorage.getItem("config"));
 
     //Inicializar configuracion default o almacenada en local storage
     localConfig == undefined ? localStorage.setItem("config", JSON.stringify(config)) : config = localConfig;
 }
 
 //! PROTOCOLOS
+//Realiza las tareas necesarias al realizar el ordenamiento
+function sortProtocol(method) {
+    globalArray = method(globalArray);
+    config.sorted = true;
+    updateConfig();
+    displayArray(globalArray);
+}
 
 //***** Sincronizar select *****//
 function matchSelectedLength() {
@@ -104,6 +112,10 @@ function generateArray() {
     for (let i = 0; i < config.arrayLength; i++) {
         array.push(Math.floor(Math.random() * 500) + 10);
     }
+
+    config.sorted = false;
+    updateConfig();
+
     return array;
 }
 
@@ -130,11 +142,26 @@ function clearArray() {
     document.querySelector("#array").innerHTML = "";
 }
 
+// ! TOASTIFY 
+function alreadySortedToast() {
+    let style = config.darkMode ? 
+    {background: "#212121", color: "white", shadow: "none"} : {background: "white", color: "#212121"};
+
+    Toastify({
+        text: "The array is already sorted",
+        duration: 2000,
+        close: true,
+        gravity: "top",
+        position: "left",
+        stopOnFocus: true,
+        style: style,
+    }).showToast();
+}
+
 
 // ! EVENTOS
 //***** Generar nuevo array *****/
-document.getElementById("generate").addEventListener("click",
-    () => {
+document.getElementById("generate").addEventListener("click", () => {
         getConfig();
         globalArray = generateArray();
         displayArray(globalArray)
@@ -149,30 +176,25 @@ document.querySelector("#length").addEventListener("change", () => {
 
 //***** Elegir algoritmo *****//
 document.getElementById("quick").addEventListener("click", () => {
-    globalArray = quickSort(globalArray);
-    displayArray(globalArray);
+    config.sorted ? alreadySortedToast() : sortProtocol(quickSort);
 });
 
 document.getElementById("bubble").addEventListener("click", () => {
-    globalArray = bubbleSort(globalArray);
-    displayArray(globalArray);
+    config.sorted ? alreadySortedToast() : sortProtocol(bubbleSort);
 });
 
 document.getElementById("merge").addEventListener("click", () => {
-    globalArray = mergeSort(globalArray);
-    displayArray(globalArray);
+    config.sorted ? alreadySortedToast() : sortProtocol(mergeSort);
 })
 
 document.getElementById("heap").addEventListener("click", () => {
-    globalArray = heapSort(globalArray);
-    displayArray(globalArray);
+    config.sorted ? alreadySortedToast() : sortProtocol(heapSort);
 })
 
 //***** activar/desactivar modo oscuro *****//
 document.querySelector("#darkMode").addEventListener("click", () => {
     darkModeSwitch();
 })
-
 
 //! ALGORITMOS DE ORDENAMIENTO
 
