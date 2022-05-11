@@ -12,7 +12,7 @@ let config = {
 let sortingInfo;
 
 function getInfo() {
-    fetch("/resources/sortingInfo.JSON")
+    fetch("./resources/sortingInfo.JSON")
         .then(response => response.json())
         .then(data => {
             sortingInfo = data.info;
