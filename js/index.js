@@ -5,8 +5,22 @@ let globalArray = [];
 //Objeto config para uso de JSON y guardar configuraciones de usuario.
 let config = {
     arrayLength: 30,
-    darkMode: false,
+    darkMode : false,
     sorted: false
+};
+
+let sortingInfo;
+
+function getInfo() {
+    fetch("/resources/sortingInfo.JSON")
+        .then(response => response.json())
+        .then(data => {
+            sortingInfo = data.info;
+        });
+}
+
+function setConfig(configuration) {
+    config = configuration;
 }
 
 //Actualiza la configuracion en local storage
@@ -29,6 +43,16 @@ function initializeConfig() {
 }
 
 //! PROTOCOLOS
+//***** Protocolo de inicio (tareas necesarias al ejecutar) *****//
+function initProtocol() {
+    initializeConfig();
+    matchSelectedLength();
+    globalArray = generateArray();
+    displayArray(globalArray);
+    matchDarkMode();
+    getInfo();
+}
+
 //Realiza las tareas necesarias al realizar el ordenamiento
 function sortProtocol(method) {
     globalArray = method(globalArray);
@@ -61,15 +85,6 @@ function matchDarkMode() {
         //Actualizar texto de boton
         document.querySelector("#darkMode").innerHTML = "Light Mode"
     };
-}
-
-//***** Protocolo de inicio (tareas necesarias al ejecutar) *****//
-function initProtocol() {
-    initializeConfig();
-    matchSelectedLength();
-    globalArray = generateArray();
-    displayArray(globalArray);
-    matchDarkMode();
 }
 
 //***** aplicar modo oscuro *****//
@@ -158,6 +173,15 @@ function alreadySortedToast() {
     }).showToast();
 }
 
+function showInfo() {
+    let info = `<p>${sortingInfo}</p>`
+    document.querySelector("#info").append(info);
+}
+
+function hideInfo() {
+    let mode = config.darkMode ? "dark" : "light";
+    document.querySelector("#info").innerHTML = `<span class=${mode}>i</span>`;
+}
 
 // ! EVENTOS
 //***** Generar nuevo array *****/
@@ -172,6 +196,15 @@ document.querySelector("#length").addEventListener("change", () => {
     let selectedLenght = document.querySelector("#length").value;
     config.arrayLength = selectedLenght;
     updateConfig();
+});
+
+//***** Mostrar info *****//
+document.querySelector("#info").addEventListener("mouseover", () => {
+    showInfo();
+});
+
+document.querySelector("#info").addEventListener("mouseout", () => {
+    hideInfo();
 });
 
 //***** Elegir algoritmo *****//
@@ -328,6 +361,3 @@ function merge(leftArray, rightArray) {
 
 //! INICIO DE PROGRAMA
 initProtocol();
-
-
-
