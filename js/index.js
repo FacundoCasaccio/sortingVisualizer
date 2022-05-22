@@ -1,5 +1,6 @@
-//Array mostrado en pantalla
+//Array interno y mostrado en pantalla
 let globalArray = [];
+let displayedArray = document.querySelector("#array");
 
 //***** configuracion *****/
 //Objeto config para uso de JSON y guardar configuraciones de usuario.
@@ -9,18 +10,19 @@ let config = {
     sorted: false
 };
 
+//Velocidad de ordenamiento del array
+let speed = 35;
+
+//Informacion capturada con fetch para visualizar en info
 let sortingInfo;
 
+//Fetch de info de archivo local
 function getInfo() {
-    fetch("./resources/sortingInfo.JSON")
+    fetch("/resources/sortingInfo.JSON")
         .then(response => response.json())
         .then(data => {
             sortingInfo = data.info;
         });
-}
-
-function setConfig(configuration) {
-    config = configuration;
 }
 
 //Actualiza la configuracion en local storage
@@ -48,17 +50,28 @@ function initProtocol() {
     initializeConfig();
     matchSelectedLength();
     globalArray = generateArray();
-    displayArray(globalArray);
+    renderArray(globalArray);
     matchDarkMode();
     getInfo();
 }
 
+//Colorea el array una vez ordenado
+async function displaySortedState() {
+    let arrayElements = document.querySelectorAll(".bar");
+
+    for(let i = 0; i < arrayElements.length; i++) {
+        arrayElements[i].style.backgroundColor = "cyan";
+        await delay(25);
+    }
+}
+
+//***** Protocolo de ordenamiento *****/
 //Realiza las tareas necesarias al realizar el ordenamiento
-function sortProtocol(method) {
-    globalArray = method(globalArray);
+async function sortProtocol(method) {
+    globalArray = await method(globalArray, 0, globalArray.length - 1);
     config.sorted = true;
+    displaySortedState();
     updateConfig();
-    displayArray(globalArray);
 }
 
 //***** Sincronizar select *****//
@@ -135,20 +148,17 @@ function generateArray() {
 }
 
 //***** Mostrar array en pantalla *****//
-function displayArray(array) {
+function renderArray(array) {
     clearArray();
-
-    let list = document.querySelector("#array");
 
     let className = config.darkMode ? "darkArrayElement" : "lightArrayElement"
 
-    //Crear li por elemento de array y asignarle propiedades para ver en pantalla
-    for (let element of array) {
-        let li = document.createElement("li");
-        li.className = className;
-        li.style = `height: ${element}px`;
-        li.innerHTML = element;
-        list.appendChild(li);
+    for(let i = 0; i < array.length; i++) {
+        let arrayElement = document.createElement("li");
+        arrayElement.classList.add(className);
+        arrayElement.classList.add("bar");
+        arrayElement.style.height = array[i] + "px"
+        displayedArray.appendChild(arrayElement);
     }
 }
 
@@ -174,7 +184,9 @@ function alreadySortedToast() {
 }
 
 function showInfo() {
-    let info = `<p>${sortingInfo}</p>`
+    let info = document.createElement("div");
+    info.innerHTML = `${sortingInfo}`;
+    info.className = !config.darkMode ? "light" : "dark";
     document.querySelector("#info").append(info);
 }
 
@@ -183,12 +195,16 @@ function hideInfo() {
     document.querySelector("#info").innerHTML = `<span class=${mode}>i</span>`;
 }
 
+function delay(ms) {
+    return new Promise((response) => setTimeout(response, ms))
+}
+
 // ! EVENTOS
 //***** Generar nuevo array *****/
 document.getElementById("generate").addEventListener("click", () => {
         getConfig();
         globalArray = generateArray();
-        displayArray(globalArray)
+        renderArray(globalArray)
     });
 
 //***** seleccionar largo array *****//
@@ -232,64 +248,63 @@ document.querySelector("#darkMode").addEventListener("click", () => {
 //! ALGORITMOS DE ORDENAMIENTO
 
 // ***** QuickSort *****
-function quickSort(array) {
-
-    if (array.length <= 1) {
-        return array;
+async function quickSort(array, start, end) {
+    if (start >= end) {
+        return;
     }
+    let index = await partition(array, start, end);
+    await quickSort(array, start, index - 1);
+    await quickSort(array, index + 1, end);
+}
 
-    let pivot = array[Math.floor(array.length / 2)];
-    //const pivot = array[array.length - 1];
-    const leftArray = [];
-    const rightArray = [];
-
-    //iterar todos los elementos del array menos el pivot
-    //los mas grandes o iguales van al array derecho y los mas chicos van al array izquierdo
-    for (let element of array.slice(0, array.indexOf(pivot)).concat(array.slice(array.indexOf(pivot) + 1, array.length))) {
-        element < pivot ? leftArray.push(element) : rightArray.push(element);
+async function partition(array, start, end) {
+    let pivotIndex = start;
+    let pivotValue = array[end];
+    for (let i = start; i < end; i++) {
+        if (array[i] < pivotValue) {
+            await swapElements(array, i, pivotIndex);
+            pivotIndex++;
+        }
     }
-
-    return [...quickSort(leftArray), pivot, ...quickSort(rightArray)];
+    await swapElements(array, pivotIndex, end);
+    return pivotIndex;
 }
 
 // ***** BubbleSort *****
-function bubbleSort(array) {
-
+async function bubbleSort(array) {
     //Iterar el array la cantidad de veces de su largo
     for (let i = 0; i < array.length; i++) {
         //Comparar elemento con elemento siguiente hasta terminar todo el array
         for (let j = 0; j < (array.length - i - 1); j++) {
             if (array[j] > array[j + 1]) {
                 //Intercambiar elementos cuando el elemento en el indice mas chico es mas grande
-                swapElements(array, j, j + 1);
+                await swapElements(array, j, j + 1);
             }
         }
     }
-
     return array;
 }
 
 // ***** HeapSort ******
-function heapSort(array) {
+async function heapSort(array) {
     if (array.length < 2) return array;
     let arrayLength = array.length;
 
     //crear estructura de maxHeap (padre siempre mayor a hijos)
     for (let i = Math.floor(array.length / 2) - 1; i >= 0; i--) {
-        sortParentAndChild(array, arrayLength, i);
+        await sortParentAndChild(array, arrayLength, i);
     }
 
     //Cambiar el elemento raiz (el mas grande de todos) con el ultimo ordenado (el mas chico)
     for (let i = array.length - 1; i > 0; i--) {
-        swapElements(array, 0, i); //cambiar elementos
+        await swapElements(array, 0, i); //cambiar elementos
         arrayLength--;
-        sortParentAndChild(array, arrayLength, 0); //reestructurar el arbol sin el mas grande
+        await sortParentAndChild(array, arrayLength, 0); //reestructurar el arbol sin el mas grande
     }
-
     return array;
 }
 
-function sortParentAndChild(array, arrayLength, parentIndex) {
+async function sortParentAndChild(array, arrayLength, parentIndex) {
     //Hijos del arbol
     const leftIndex = (parentIndex * 2) + 1;
     const rightIndex = (parentIndex * 2) + 2;
@@ -305,21 +320,33 @@ function sortParentAndChild(array, arrayLength, parentIndex) {
     //Si el padre no es el mayor
     if (maxIndex !== parentIndex) {
         //intercambiar valores
-        swapElements(array, parentIndex, maxIndex);
+        await swapElements(array, parentIndex, maxIndex);
         //reconstruir estructura de maxHeap
-        sortParentAndChild(array, arrayLength, maxIndex);
+        await sortParentAndChild(array, arrayLength, maxIndex);
     }
 }
 
 //Intercambiar elementos de array
-function swapElements(array, a, b) {
+async function swapElements(array, a, b) {
+    await delay(speed);
+    
+    let arrayElements = document.querySelectorAll(".bar");
+
+    for(let i = 0; i < arrayElements.length; i++) {
+        if (i !== a && i !== b) arrayElements[i].style.backgroundColor = "";
+    }
     let aux = array[a];
+    
     array[a] = array[b];
     array[b] = aux;
+    arrayElements[a].style.height = array[a] + "px";
+    arrayElements[a].style.backgroundColor = "coral";
+    arrayElements[b].style.height = array[b] + "px";
+    arrayElements[b].style.backgroundColor = "coral";
 }
 
 //***** MergeSort *****//
-function mergeSort(array) {
+async function mergeSort(array, flag) {
     if (array.length <= 1) return array;
 
     //Obtener el medio del array
@@ -330,33 +357,49 @@ function mergeSort(array) {
     let rightArray = array.slice(middleIndex);
 
     //Llamada recursiva para luego unirlos en rewind
-    return merge(mergeSort(leftArray), mergeSort(rightArray));
+    return await merge(await mergeSort(leftArray, true), await mergeSort(rightArray, false), middleIndex, flag);
 }
 
 //Unir sub arrays
-function merge(leftArray, rightArray) {
+async function merge(leftArray, rightArray, middleIndex, flag) {
+
     //Contadores de indices de arrays
-    let leftIndex = 0;
-    let rightIndex = 0;
     let mergedArray = [];
+    let resultArray = [];
 
     //Iterar arrays hasta el final comparando valores componiendo el array combinado de ambos
-    while (leftIndex < leftArray.length && rightIndex < rightArray.length) {
-
-        let leftElement = leftArray[leftIndex];
-        let rightElement = rightArray[rightIndex];
-
-        if (leftElement < rightElement) {
-            mergedArray.push(leftElement);
-            leftIndex++;
+    while (leftArray.length && rightArray.length) {
+        if (leftArray[0] < rightArray[0]) {
+            mergedArray.push(leftArray.shift());
         } else {
-            mergedArray.push(rightElement);
-            rightIndex++;
+            mergedArray.push(rightArray.shift());
         }
+        resultArray = [...mergedArray, ...leftArray.slice(), ...rightArray.slice()];
     }
 
+    //Renderiza lado izquierdo o derecho (true/false)
+    if (flag) await arrangeArray(resultArray, 0, middleIndex);
+    else await arrangeArray(resultArray, middleIndex + 1, resultArray.length - 1);
+
+    //Renderiza array competo
+    await arrangeArray(resultArray,0,resultArray.length - 1);
+
     //Retornar array final y elementos restantes (en caso de no comparar) de izqueirda o derecha
-    return [...mergedArray, ...leftArray.slice(leftIndex), ...rightArray.slice(rightIndex)];
+    return resultArray;
+}
+
+//Muestra los pasos del merge sort, coloreando y estableciendo altura
+async function arrangeArray(array, startIndex, endIndex){
+    let arrayElements = document.querySelectorAll(".bar");
+    for (let i = startIndex; i <= endIndex; i++) {
+        await delay(speed);
+        arrayElements[i].style.backgroundColor = "coral";
+        arrayElements[i].style.height = array[i] + "px";
+    }
+
+    for(let i = startIndex; i <= endIndex; i++) {
+        arrayElements[i].style.backgroundColor = "";
+    }
 }
 
 //! INICIO DE PROGRAMA

@@ -39,6 +39,38 @@ header.dark {
     box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
 }
 
+#info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#info > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    width: 300px;
+    padding: 1.5rem;
+    position: absolute;
+    top: 100px;
+    right: 150;
+    z-index: 0;
+    border-radius: 5px;
+    transition: ease-in-out;
+    
+}
+
+#info > div.light {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+
+#info > div.dark {
+    box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 24px;
+}
+
 h1 {
     font-size: 1.4rem;
 }
@@ -129,8 +161,6 @@ select {
     margin: 0 5px;
     
 }
-
-
 
 /* Footer */
 footer {
