@@ -11,7 +11,7 @@ let config = {
 };
 
 //Velocidad de ordenamiento del array
-let speed = 35;
+let speed = 75;
 
 //Informacion capturada con fetch para visualizar en info
 let sortingInfo;
@@ -61,6 +61,10 @@ async function displaySortedState() {
 
     for(let i = 0; i < arrayElements.length; i++) {
         arrayElements[i].style.backgroundColor = "cyan";
+        await delay(25);
+    }
+    for(let i = 0; i < arrayElements.length; i++) {
+        arrayElements[i].style.backgroundColor = "";
         await delay(25);
     }
 }
@@ -128,7 +132,7 @@ function darkModeSwitch() {
 
     //Cambiar tema
     elements.forEach(element => element.className = element.className.replace(currentClass, newClass));
-    arrayElements.forEach(element => element.className = `${newClass}ArrayElement`);
+    arrayElements.forEach(element => element.className = `${newClass}ArrayElement bar`);
 }
 
 //! MANIPULACION DE ARRAY EN PANTALLA
